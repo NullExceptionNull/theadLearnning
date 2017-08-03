@@ -1,5 +1,6 @@
 package com.xyhj;
 
+import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -32,4 +33,34 @@ public class ReadWriteLockDemo {
         }
     }
 
+    public static void main(String[] args) {
+        ReadWriteLockDemo demo = new ReadWriteLockDemo();
+        Runnable readRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    demo.handleRead(readLock);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Runnable writeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    demo.handleWrite(writeLock,new Random().nextInt());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        for (int i = 0; i < 18; i++) {
+            new Thread(readRunnable).start();
+        }
+        for (int i = 18; i < 20; i++) {
+            new Thread(writeRunnable).start();
+        }
+    }
 }
